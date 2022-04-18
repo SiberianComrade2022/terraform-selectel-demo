@@ -47,12 +47,12 @@ https://kb.selectel.com/docs/cloud/servers/tools/how_to_use_openstack_api_throug
 
 5. Note output section of the previous command. It contains IP addresses and Prometheus URL needed to establish connections to demo infrastructure. This output can be viewed again any time by running `terraform output` from root of working directory. 
 
-6. Terminate all cloud instances `terraform destroy`. 
-
 :information_source: In case of problems occurred during Terraform execution, start it in debug mode like the following command:
+
 ```bash
 TF_LOG=DEBUG OS_DEBUG=1 terraform apply
 ```
+
 ****
 ## Running Ansible
 1. Open UNIX shell and and switch to folder `ansible`: `cd ansible`.
@@ -69,6 +69,11 @@ Open UNIX shell and type the command below:
 
 ### Prometheus
 Open a web browser. Enter address `https://`<prometheus_public_ip>:`9090`. For your convenience copy pre-generated URL from `terraform output` `https_to_prometheus`.
+
+
+:information_source: Access to Prometheus Web inferface is limited to IP addresses defined as `proctor_ip` and to public IP address of the host from which you ran Terraform (check `curl ifconfig.ru`). 
+
+:no_entry: Access to Prometheus Web inferface from other hosts won't be possible by design.
 
 Watch the "Warning: Potential Security Risk" notice and click "Advanced..." to "Accept the Risk". 
 
@@ -119,3 +124,6 @@ Node Exporter instances and Prometheus server have been already configured to co
             - 10.20.30.27:9100
             - 10.20.30.93:9100
     ```
+
+## Terminate all cloud instances 
+Run `terraform destroy` to save cloud resources and your budget.
