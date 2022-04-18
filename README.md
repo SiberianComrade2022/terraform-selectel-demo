@@ -17,7 +17,10 @@ https://kb.selectel.com/docs/cloud/servers/tools/how_to_use_openstack_api_throug
 
 9. (Optionally) For running tool `openstack` from the previous step, import contents of shell script `rc.sh` downloaded above. Open UNIX shell and run `source rc.sh`.
 
-10. Clone this git repository to the current directory created above.
+10. Clone this git repository to the current directory created above:
+      ```bash
+      git clone https://github.com/SiberianComrade2022/terraform-selectel-demo.git .
+      ```
 
 ***
 ## Initialize and run Terraform
@@ -30,10 +33,11 @@ https://kb.selectel.com/docs/cloud/servers/tools/how_to_use_openstack_api_throug
       sel_token      = ""   # Access token created and available through Web Console. Copy full string.
       proctor_ip     = ""   # Additional IP address or a subnet that has access to Bastion SSH and Prometheus web
       ``` 
-2. Run `terraform init` initialize Providers used in Terraform configuration.
-   :warning: Be prepared that not all Providers can be downloaded from HashiCorp; they intentionally block access with HTTP code 405. If this is your case you should either use available mirrors or mirror the needed providers as described in [README Extra](README_extra.md).
-   Expect to see the following successful message in green:
+2. Run `terraform init` initialize Providers used in Terraform configuration. Expect to see the following successful message in green:
    > Terraform has been successfully initialized!
+
+   :warning: Be prepared that not all Providers can be downloaded from HashiCorp; they intentionally block access with HTTP code 405. If this is your case you should either use available mirrors or mirror the needed providers as described in [README Extra](README_extra.md).
+
 
 3. Run `terraform validate` to ensure all files still have correct syntax.
    > Success! The configuration is valid.
@@ -41,11 +45,11 @@ https://kb.selectel.com/docs/cloud/servers/tools/how_to_use_openstack_api_throug
 4. Run `terraform apply`. It should report successful creation of defined objects.
    > Apply complete! Resources: 43 added, 0 changed, 0 destroyed.
 
-5. Note output of the previous command. It contains IP addresses and Prometheus URL needed to establish connections to demo infrastructure. This output can be viewed again any time by running `terraform output` from root of working directory. 
+5. Note output section of the previous command. It contains IP addresses and Prometheus URL needed to establish connections to demo infrastructure. This output can be viewed again any time by running `terraform output` from root of working directory. 
 
 6. Terminate all cloud instances `terraform destroy`. 
 
-Note: in case of problems occurred during Terraform execution, start it in debug mode like the following command:
+:information_source: In case of problems occurred during Terraform execution, start it in debug mode like the following command:
 ```bash
 TF_LOG=DEBUG OS_DEBUG=1 terraform apply
 ```
