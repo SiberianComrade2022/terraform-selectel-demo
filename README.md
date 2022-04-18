@@ -33,7 +33,7 @@ https://kb.selectel.com/docs/cloud/servers/tools/how_to_use_openstack_api_throug
       sel_token      = ""   # Access token created and available through Web Console. Copy full string.
       proctor_ip     = ""   # Additional IP address or a subnet that has access to Bastion SSH and Prometheus web
       ``` 
-2. Run `terraform init` initialize Providers used in Terraform configuration. Expect to see the following successful message in green:
+2. Run `terraform init` to initialize Providers used in Terraform configuration. Expect to see the following successful message in green:
    > Terraform has been successfully initialized!
 
    :warning: Be prepared that not all Providers can be downloaded from HashiCorp; they intentionally block access with HTTP code 405. If this is your case you should either use available mirrors or mirror the needed providers as described in [README Extra](README_extra.md).
@@ -55,7 +55,7 @@ TF_LOG=DEBUG OS_DEBUG=1 terraform apply
 
 ****
 ## Running Ansible
-1. Open UNIX shell and and switch to folder `ansible`: `cd ansible`.
+1. Open UNIX shell and switch to folder `ansible`: `cd ansible`.
 
 2. Run `ansible-playbook setup.yaml`. Successful execution should produce only green and yellow/amber status lines. 
 
@@ -65,7 +65,10 @@ TF_LOG=DEBUG OS_DEBUG=1 terraform apply
 
 ### Load Balancer
 Open UNIX shell and type the command below:
-`curl `<loadbalancer_ip>`:8080` - watch different IP addresses are printed as you run this command each time. Note that accessing the same URL from browser might not provide the same IP changing results, so use `curl`.
+
+`curl `<loadbalancer_ip>`:8080`
+
+Watch different IP addresses are printed as you run this command each time. Note that accessing the same URL from browser might not provide the same  meaningful results with showing different IPs, so use `curl`.
 
 ### Prometheus
 Open a web browser. Enter address `https://`<prometheus_public_ip>:`9090`. For your convenience copy pre-generated URL from `terraform output` `https_to_prometheus`.
@@ -94,7 +97,7 @@ Login with SSH to Bastion machine as advised in output **ssh_to_bastion**, copy-
 
 You should be able to get there as root superuser without additional questions and see command prompt like `root@tf-bastion:~#` or whatever was (re)defined in variable `bastion_name`.
 
-Run `curl `_pool.ip.address_`:9100`. Obtain these addresses of Pool machines from `terraform output`. Normally you should witness response
+On the Bastion host run `curl `_pool.ip.address_`:9100`. Obtain these IP addresses of Pool machines from `terraform output`. Normally you should witness response
   > Client sent an HTTP request to an HTTPS server.
 
 which proves that Node Exporter service is working on HTTPS protocol.
