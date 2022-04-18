@@ -1,0 +1,97 @@
+#cloud-config
+package_update: true
+packages:
+ - nginx
+
+write_files:
+  - path: /tmp/setup/run.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+
+      cd /root/
+      wget https://github.com/prometheus/node_exporter/releases/download/v${version}/node_exporter-${version}.linux-amd64.tar.gz
+      tar zxvf node_exporter-*.linux-amd64.tar.gz
+      cd       node_exporter-*.linux-amd64
+
+      useradd --no-create-home --shell /bin/false -c "Node Exporter User"  nodeuser
+
+      cp node_exporter /usr/local/bin/
+
+      chown -R nodeuser:nodeuser /usr/local/bin/node_exporter
+
+      rm     /root/node_exporter-${version}.linux-amd64.tar.gz4.tar.gz
+      rm -rf /root/node_exporter-${version}.linux-amd64
+
+      mkdir -p -m 755            ${prom_path}
+      chown -R nodeuser:nodeuser ${prom_path}
+      
+      systemctl daemon-reload
+      systemctl enable node_exporter --now
+
+  - path: ${prom_path}/web.yml 
+    permissions: '0644'
+    content: |
+      tls_server_config:
+        cert_file: ${prom_path}/node_exporter.crt
+        key_file:  ${prom_path}/node_exporter.key
+
+  - path: ${prom_path}/node_exporter.crt
+    permissions: '0600'
+    content: |
+      ${prom_cert}
+
+  - path: ${prom_path}/node_exporter.key
+    permissions: '0600'
+    content: |
+      ${prom_key}
+
+  - path: /etc/systemd/system/node_exporter.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Prometheus Node Exporter
+      Wants=network-online.target
+      After=network-online.target
+
+      [Service]
+      User=nodeuser
+      Group=nodeuser
+      Type=simple
+      # '-' means that if the file does not exist, it will not be read and no error or warning message is logged
+      EnvironmentFile=-/etc/sysconfig/node_exporter
+      ExecStart=/usr/local/bin/node_exporter --web.config=${prom_path}/web.yml
+      ExecReload=/bin/kill -HUP $MAINPID
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+  ## Set default Nginx home page
+  - path: /tmp/setup/create_index_html.sh 
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      
+      IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+      HOSTNAME=$(curl -s http://169.254.169.254/latest/meta-data/hostname)
+      AZ=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+      mkdir -p /var/www/html/
+      cat << EOT >/var/www/html/index.html
+      <!DOCTYPE html>
+      <html>
+      <head><title>Welcome to nginx!</title></head>
+      <body>
+      <h1>Welcome to default web page on $${HOSTNAME}:$${IP}!</h1>
+      <p>Availability Zone: $${AZ}</p>
+      <img src="https://picsum.photos/200/300">
+      <p><em>Thank you for using nginx.</em></p>
+      </body>
+      </html>
+      EOT
+      exit 0
+
+runcmd:
+  - /tmp/setup/create_index_html.sh
+  - /tmp/setup/run.sh

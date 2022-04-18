@@ -1,0 +1,16 @@
+[defaults]
+inventory         = ./inventory
+roles_path        = ./roles
+host_key_checking = False
+allow_world_readable_tmpfiles = True
+remote_user = root
+interpreter_python = /usr/bin/python3
+private_key_file   = ${private_key}
+use_persistent_connections = True
+
+[inventory]
+enable_plugins = ini, auto
+
+[ssh_connection]
+pipelining = true
+ssh_args = -C -o ControlMaster=auto -o ControlPersist=10m -o ForwardAgent=yes

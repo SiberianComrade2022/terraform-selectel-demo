@@ -1,0 +1,16 @@
+[pool]
+%{ for ip in pool_ips ~}
+${ip}
+%{ endfor ~}
+
+[pool:vars]
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q -i ${private_key} -o StrictHostKeyChecking=no root@${bastion_ip}"'
+
+[bastion]
+${bastion_ip}
+
+[prometheus]
+${prom_ip}
+
+[prometheus:vars]
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q -i ${private_key} -o StrictHostKeyChecking=no root@${bastion_ip}"'

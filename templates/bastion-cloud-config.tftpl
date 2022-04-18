@@ -1,0 +1,36 @@
+#cloud-config
+package_update: true
+packages:
+ - mc
+ - pv
+
+write_files:
+  - path: /root/.ssh/id_rsa
+    permissions: '0600'
+    content: |
+      ${infra_private_key}
+
+    # Enable SSH only from master IP and inside. The rest is closed.
+  - path: /tmp/setup/firewall.sh 
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # The order of commands is correct.
+      
+      iptables -P INPUT DROP
+
+      iptables -I INPUT -p tcp  -s 10.0.0.0/8    --dport 22 -j ACCEPT
+      iptables -I INPUT -p tcp  -s ${master_ip}  --dport 22 -j ACCEPT
+      iptables -I INPUT -p tcp  -s ${proctor_ip} --dport 22 -j ACCEPT
+
+      iptables -I INPUT -p icmp -s ${master_ip}             -j ACCEPT
+      iptables -I INPUT -p icmp -s ${proctor_ip}            -j ACCEPT     
+      iptables -I INPUT -p icmp -s 10.0.0.0/8               -j ACCEPT
+
+      iptables -I INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+      iptables -I INPUT -i lo -j ACCEPT
+
+      exit 0
+
+runcmd:
+  - /tmp/setup/firewall.sh 

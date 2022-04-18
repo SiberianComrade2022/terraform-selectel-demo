@@ -1,0 +1,116 @@
+---
+
+- hosts: all
+  tasks:
+  - name: Disable services
+    service:
+      name: unattended-upgrades
+      state:   stopped
+      enabled: no
+
+- hosts: pool
+  tasks:
+
+  - name: Install Python3 and lsb-release
+    package:
+      name: [ "python3", "python3-pip", "lsb-release" ]
+      state: present
+
+  - name: Install packages required by Docker
+    apt:
+      update_cache: yes
+      state: latest
+      name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gpg-agent
+      - software-properties-common
+
+  # Pay attention on the "distro-agnostic" way below
+  # Check availability of these fields in 'ansible localhost -m ansible.builtin.setup'
+  - name: Add Docker GPG key
+    apt_key:
+      url: https://download.docker.com/linux/{{ ansible_lsb.id|lower }}/gpg
+      state: present
+  
+  - name: Add Docker apt repo
+    apt_repository:
+      repo: deb https://download.docker.com/linux/{{ ansible_lsb.id|lower }} {{ ansible_lsb.codename|lower }} stable
+      state: present
+
+  - name: Install Docker
+    apt:
+      update_cache: yes
+      state: present 
+      name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - python3-docker
+
+  - name: Start Docker service
+    service:
+      name: docker
+      state: started
+
+  - name: Redis container
+    docker_container:
+      name:    redis-service
+      image:   redis:6
+      command: redis-server
+      state: started
+      expose: 6379
+      ports:
+       - 6379:6379
+
+- hosts: bastion
+  tasks:
+ 
+  - name: Install useful tools
+    package:
+      update_cache: yes
+      name: "{{ bastion_packages }}"
+      state: present
+      install_recommends: no
+ 
+  - name: Install Ansible
+    package: 
+      name: [ "ansible", "python3", "python3-pip", "python-setuptools", "virtualenv" ]
+      state: present
+
+  - name: Fix Private key permissions
+    file: 
+      path: /root/.ssh/id_rsa
+      mode: '0400'
+
+- hosts: prometheus
+  tasks:
+
+  - name: Install Midnight Commander
+    package:
+      update_cache: yes    
+      name: [ "mc" ]
+      state: present
+  
+  - name: File with shortcuts for Midnight Commander - Folder
+    file:
+      path: /root/.config/mc
+      state: directory
+
+  - name: File with shortcuts for Midnight Commander - File
+    file:
+      path: /root/.config/mc/hotlist
+      state: touch
+      modification_time: preserve
+      access_time: preserve
+
+  - name: Handy shortcuts in Midnight Commander
+    blockinfile:
+      dest: /root/.config/mc/hotlist
+      content: |
+        ENTRY "{{ prom_path }}"      URL "{{ prom_path }}"
+        ENTRY "/var/lib/prometheus"  URL "/var/lib/prometheus"
+        ENTRY "/usr/local/bin/"      URL "/usr/local/bin/"
+        ENTRY "/etc/systemd/system/" URL "/etc/systemd/system/"
+        ENTRY "/var/log"             URL "/var/log"

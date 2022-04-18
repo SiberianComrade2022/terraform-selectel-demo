@@ -1,0 +1,19 @@
+---
+
+prom_path: /etc/prometheus/
+lb_port: 8080
+bastion_packages:
+  - mc
+  - tmux
+  - screen
+  - pv
+  - tcpdump
+  - strace
+  - iperf
+  - iftop
+  - iotop
+  - atop
+  - htop
+  - jq
+  - redis-tools
+  - mysql-client
