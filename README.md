@@ -9,7 +9,7 @@ https://kb.selectel.com/docs/cloud/servers/tools/how_to_use_openstack_api_throug
 
 5. Install **Terraform**. The demonstration was tested on Terraform version 1.1.x+. See the official instructions from HashiCorp: https://learn.hashicorp.com/tutorials/terraform/install-cli.
 
-6. Set shell auto-completion feature for Terraform to simplify further command line tasks. Run: `terraform -install-autocomplete`. It will append a line to your `.bashrc` file in your home directory. In order to activate this auto-completion functionality you should either re-open your shell or run the added line in teh existing shell.
+6. Set shell auto-completion feature for Terraform to simplify further command line tasks. Run: `terraform -install-autocomplete`. It will append a line to your `.bashrc` file in your home directory. In order to activate this auto-completion functionality you should either re-open your shell or run the added line in the existing shell.
 
 7. Install **Ansible**; it will be needed for maintaining post-deployment setup. Most Linux distributive include its packages. If unsure how to proceed, you might want to check the official guide: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html.
 
