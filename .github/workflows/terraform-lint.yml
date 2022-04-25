@@ -19,4 +19,10 @@ jobs:
           terraform_version: 1.0.9
 
       - name: Run terraform fmt check
-        run: terraform fmt -check -diff -recursive ./terraform
+        run: terraform fmt -check -recursive
+
+      - name: Run terraform init
+        run: terraform init -backend=false
+
+      - name: Run terraform validate
+        run: terraform validate
