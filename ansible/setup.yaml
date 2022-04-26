@@ -40,7 +40,7 @@
       state: present
 
   - name: Install Docker
-      apt:
+    apt:
       update_cache: yes
       state: present 
       name:
