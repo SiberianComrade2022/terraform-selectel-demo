@@ -1,3 +1,7 @@
+[![Ansible Lint](https://github.com/SiberianComrade2022/terraform-selectel-demo/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/SiberianComrade2022/terraform-selectel-demo/actions/workflows/ansible-lint.yml)
+[![Terraform Lint](https://github.com/SiberianComrade2022/terraform-selectel-demo/actions/workflows/terraform-lint.yml/badge.svg)](https://github.com/SiberianComrade2022/terraform-selectel-demo/actions/workflows/terraform-lint.yml)
+[![tfsec](https://github.com/SiberianComrade2022/terraform-selectel-demo/actions/workflows/tfsec.yml/badge.svg)](https://github.com/SiberianComrade2022/terraform-selectel-demo/actions/workflows/tfsec.yml)
+
 
 ## Preparations
 1. Create a working directory for this demonstration:  `mkdir tf-demo ; cd tf-demo`
