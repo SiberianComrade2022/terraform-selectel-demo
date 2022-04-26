@@ -6,16 +6,10 @@
 name: tfsec
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-    - '**.tf'
-    - '**.tftpl'
-  pull_request:
-    branches: [ main ]
-    paths:
-    - '**.tf'
-    - '**.tftpl'    
+  workflow_run:
+    workflows: [ "Terraform Lint" ]
+    types:
+    - completed 
   schedule:
     - cron: '24 8 * * 4'
 
