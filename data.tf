@@ -1,5 +1,5 @@
 # Bastion
-data "openstack_compute_flavor_v2" "bastion_flavor" {
+"openstack_compute_flavor_v2" "bastion_flavor" {
   name      = var.bastion_flavor
   is_public = "true"
 }
