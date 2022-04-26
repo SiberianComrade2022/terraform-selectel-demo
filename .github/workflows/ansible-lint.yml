@@ -1,7 +1,13 @@
 name: Ansible Lint
 on: 
   push:
+    paths:
+    - '**.yml'
+    - '**.yaml'  
   pull_request:
+    paths:
+    - '**.yml'
+    - '**.yaml'  
   schedule:
   - cron: '30 6 * * 1'
 
